@@ -29,5 +29,9 @@ public class Product {
     private Date releaseDate;
     private boolean productAvailable;
     private int stockQuantity;
+    private String imageName;
+    private String imageType;
 
+    //the actual image which we can store in byte stream
+    private byte[] imageData;
 }
