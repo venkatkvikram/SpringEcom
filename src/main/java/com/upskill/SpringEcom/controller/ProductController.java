@@ -36,15 +36,46 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/product/{productId}/image")
+    public ResponseEntity<byte[]> getImageByProdId(@PathVariable int productId) {
+        Product product = productService.getProductById(productId);
+        return new ResponseEntity<>(product.getImageData(), HttpStatus.OK);
+    }
+
     @PostMapping("/product")
     public ResponseEntity<?> addProduct(@RequestPart Product product, @RequestPart MultipartFile image) {
         Product saveProduct = null;
         try {
-            saveProduct = productService.addProduct(product, image);
+            saveProduct = productService.addorUpdateProduct(product, image);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return new ResponseEntity<>(saveProduct, HttpStatus.CREATED);
+    }
+
+
+    @PutMapping("/product/{id}")
+    public ResponseEntity<String> updateProduct(@PathVariable int id, @RequestPart Product product, @RequestPart MultipartFile image) {
+        Product updatedProd = null;
+        try {
+            updatedProd = productService.addorUpdateProduct(product, image);
+            return new ResponseEntity<>("Updated Product", HttpStatus.OK);
+
+        } catch(IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @DeleteMapping("/product/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable int id) {
+        Product product = productService.getProductById(id);
+        if(product != null) {
+            productService.deleteProd(id);
+            return new ResponseEntity<>("Deleted Successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 
